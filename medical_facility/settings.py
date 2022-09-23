@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
     'website',
 ]
 
@@ -55,7 +56,7 @@ ROOT_URLCONF = 'medical_facility.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -118,6 +119,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
@@ -125,3 +130,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 AUTH_USER_MODEL = 'website.User'
+
+try:
+    from website.local_settings import DATABASES
+except ModuleNotFoundError:
+    print("No database configuration in local_settings.py!!")
+    exit(0)
+
+LOGIN_REDIRECT_URL = '/account/profile/'
+LOGIN_URL = '/login/'
+
+SESSION_COOKIE_AGE = 15 * 60

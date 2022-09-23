@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Log out</title>
+{% endblock head %}
+
+{% block content %}
+    <div class="container w-50 mt-5 bg-light rounded-4 border border-dark border-2 text-center">
+        <p class="text-dark fw-bold fs-4">Logout Successful</p>
+        <p><a class="btn btn-dark" href="{% url 'login' %}">Click if you want to log in again</a></p>
+        <p><a class="btn btn-dark" href="{% url 'main' %}">Home</a></p>
+    </div>
+{% endblock content %}

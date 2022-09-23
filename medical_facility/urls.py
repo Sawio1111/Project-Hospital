@@ -16,6 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from website import views as website
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', website.MainPageView.as_view(), name='main'),
+    path('login/', website.LoginToWebsiteView.as_view(), name='login'),
+    path('logout/', website.LogoutFromWebsiteView.as_view(), name='logout'),
+    path('registration/', website.RegistrationView.as_view(), name='registration'),
+    path('account/profile/', website.PatientAccountPanelView.as_view(), name='patient-panel'),
+    path('account/update/<int:pk>/', website.PatientAccountUpdateView.as_view(), name='patient-update'),
 ]
+
