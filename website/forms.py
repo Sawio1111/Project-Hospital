@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import TextInput
+from django.forms import TextInput, ChoiceField
 from django.contrib.auth import get_user_model
 from django.core.validators import ValidationError
 
@@ -12,6 +12,7 @@ class RegistrationForm(forms.ModelForm):
 		self.fields['last_name'].required = True
 		self.fields['first_name'].required = True
 		self.fields['email'].required = True
+		self.fields['sex'].required = True
 
 	password1 = forms.CharField(widget=forms.PasswordInput,
 								required=True,
@@ -22,9 +23,7 @@ class RegistrationForm(forms.ModelForm):
 								help_text='Password should have more than 8 characters')
 	contract = forms.CharField(widget=forms.CheckboxInput,
 							   required=True,
-							   label='Consent to the terms of Regulations and Privacy Policy (required).'
-									 '<p>Read the full text of the <a href="#" class="link-dark">'
-									 'Privacy Policy and Regulations</a>')
+							   label="Consent to the terms of Regulations and Privacy Policy (required).")
 
 	class Meta:
 		model = User
@@ -33,6 +32,7 @@ class RegistrationForm(forms.ModelForm):
 				  'username',
 				  'phone_number',
 				  'pesel',
+				  'sex',
 				  'email',
 				  'password1',
 				  'password2',
@@ -66,20 +66,14 @@ class RegistrationForm(forms.ModelForm):
 class UpdateProfileForm(forms.ModelForm):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
-		self.fields['last_name'].required = True
-		self.fields['first_name'].required = True
 		self.fields['email'].required = True
 
 	class Meta:
 		model = User
-		fields = ['first_name',
-				  'last_name',
-				  'username',
+		fields = ['username',
 				  'phone_number',
-				  'pesel',
 				  'email']
 
 		widgets = {
 			'phone_number': TextInput(),
-			'pesel': TextInput(),
 		}

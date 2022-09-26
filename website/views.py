@@ -31,6 +31,7 @@ class RegistrationView(CreateView):
 	template_name = 'website/registration.html'
 	model = User
 	form_class = RegistrationForm
+	success_url = reverse_lazy('patient-panel')
 
 	def form_valid(self, form):
 		response = super().form_valid(form)
@@ -39,9 +40,6 @@ class RegistrationView(CreateView):
 		self.object.save()
 		login(self.request, self.object)
 		return response
-
-	def get_success_url(self):
-		return reverse_lazy('patient-panel')
 
 
 class PatientAccountPanelView(LoginRequiredMixin, View):
@@ -60,3 +58,9 @@ class PatientAccountUpdateView(LoginRequiredMixin, UpdateView):
 	def get_queryset(self):
 		return User.objects.filter(pk=self.kwargs['pk'])
 
+
+class PrivacyAndRegulationView(View):
+	template_name = 'website/privacy_policy_regulation.html'
+
+	def get(self, request, *args, **kwargs):
+		return render(request, self.template_name)

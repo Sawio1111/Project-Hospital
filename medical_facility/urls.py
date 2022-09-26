@@ -27,5 +27,6 @@ urlpatterns = [
     path('registration/', website.RegistrationView.as_view(), name='registration'),
     path('account/profile/', website.PatientAccountPanelView.as_view(), name='patient-panel'),
     path('account/update/<int:pk>/', website.PatientAccountUpdateView.as_view(), name='patient-update'),
+    path('about-us/privacy-policy-and-regulation/', website.PrivacyAndRegulationView.as_view(), name='policy-regulation'),
 ]
 

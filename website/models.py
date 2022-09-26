@@ -9,8 +9,13 @@ class User(AbstractUser):
 		(3, 'administrator'),
 	)
 
+	user_sex = (
+		(1, 'female'),
+		(2, 'male'),
+	)
+
 	pesel = models.IntegerField(null=True)
+	sex = models.SmallIntegerField(null=True, choices=user_sex)
 	phone_number = models.IntegerField(null=True)
 	status = models.SmallIntegerField(default=1, choices=user_status)
-
 
