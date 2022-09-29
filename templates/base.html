@@ -44,8 +44,12 @@
                     </li>
                     {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="btn btn-dark btn-rounded text-white"
-                           href="{% url 'patient-panel' %}">User Panel</a>
+                        <a class="btn btn-dark btn-rounded text-white" href=
+                                {% if user.status == 1 %}"{% url 'patient-panel' %}">
+                                {% elif user.status == 2 %}"{% url 'doctor-panel' %}">
+                                {% elif user.status == 3 %}"{% url 'admin-panel' %}">
+                                {% endif %}
+                               User Panel</a>
                     </li>
                     {% endif %}
                 <li class="nav-item mx-2">
@@ -75,7 +79,6 @@
                                     class="nav-link px-2 text-muted">Privacy policy and Regulations</a>
             </li>
         </ul>
-        <p class="text-center text-muted pt-3 px-3">© 2021 Company, Inc</p>
      </footer>
     <script defer src="{% static 'js/bootstrap.js' %}"></script>
 </body>

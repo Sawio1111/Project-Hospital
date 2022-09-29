@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Account Patient</title>
+{% endblock head %}
+
+{% block content %}
+    <div class="container-fluid w-100 mt-5 bg-light rounded-4 border border-dark border-2 text-center">
+        <span class="text-dark fw-bold fs-4">Welcome</span> <p>{{ user.first_name }} {{ user.last_name }}</p>
+        <div class="row mb-3">
+            <div class="col">
+                <a class="btn btn-dark btn-sm" href="{% url 'patient-choose' %}">Book a service</a>
+            </div>
+            <div class="col">
+                <a class="btn btn-dark btn-sm" href="{% url 'patient-update' user.id  %}">Settings Account</a>
+            </div>
+            <div class="col">
+                <a class="btn btn-dark btn-sm" href="{% url 'main'%}">Home</a>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

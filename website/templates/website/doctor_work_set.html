@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Work Hours</title>
+{% endblock head %}
+
+{% block content %}
+    {% load crispy_forms_tags %}
+    <div class="container-fluid w-50 mt-5 bg-light rounded-4 border border-dark border-2 text-center">
+    <p class="text-dark fw-bold fs-4">Add working time</p>
+        <form method="post">
+            {% csrf_token %}
+
+            {{ form|crispy }}
+
+            <br>
+            <button class="btn btn-dark" type="submit">Add</button>
+        </form>
+
+    </div>
+    {% if appointments %}
+        <div class="container-fluid w-100 mt-2 bg-light rounded-4 border border-dark border-2 text-center">
+            <p class="text-dark fw-bold fs-4">Your active working time</p>
+            <div class="row">
+                <div class="col text-dark fw-bold">
+                    Days:
+                </div>
+                <div class="col text-dark fw-bold">
+                    Hours:
+                </div>
+                <div class="col text-dark fw-bold">
+                    Appointment time:
+                </div>
+                <div class="col text-dark fw-bold">
+                    Status:
+                </div>
+            </div>
+            {% for appointment in appointments %}
+                <div class="row">
+                    <div class="col">
+                    From: {{ appointment.date_from }} To: {{ appointment.date_to }}
+                    </div>
+                    <div class="col">
+                    From: {{ appointment.time_from }} To {{ appointment.time_to }}
+                    </div>
+                    <div class="col">
+                    {{ appointment.visit_time }} min
+                    </div>
+                    <div class="col">
+                    {{ appointment.get_status_display }}
+                    </div>
+                </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+{% endblock content %}

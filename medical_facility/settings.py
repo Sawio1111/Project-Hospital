@@ -137,8 +137,7 @@ except ModuleNotFoundError:
     print("No database configuration in local_settings.py!!")
     exit(0)
 
-LOGIN_REDIRECT_URL = '/account/profile/'
 LOGIN_URL = '/login/'
 
-SESSION_COOKIE_AGE = 15 * 60
+SESSION_COOKIE_AGE = 30 * 60
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True

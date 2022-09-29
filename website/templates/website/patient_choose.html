@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Choose appointment</title>
+{% endblock head %}
+
+{% block content %}
+    {% load crispy_forms_tags %}
+    <div class="container-fluid w-50 mt-5 bg-light rounded-4 border border-dark border-2 text-center">
+    <p class="text-dark fw-bold fs-4">Search term</p>
+        <form method="post">
+            {% csrf_token %}
+
+            {{ form|crispy }}
+
+            <br>
+            <button class="btn btn-dark" type="submit">Select</button>
+        </form>
+    </div>
+    {% if visit_allowed %}
+    <div class="container-fluid w-100 mt-5 bg-light rounded-4 border border-dark border-2 text-center">
+        {% for re in res %}
+            {{ re }}
+    `   {% endfor %}
+    </div>
+    {% endif %}
+    <script>
+    </script>
+{% endblock content %}
