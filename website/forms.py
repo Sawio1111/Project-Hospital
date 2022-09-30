@@ -106,6 +106,10 @@ class ChooseServiceForm(forms.Form):
 
 
 class DoctorAccountWorkForm(forms.ModelForm):
+	def __init__(self, *args, **kwargs):
+		self.request = kwargs.pop('request', None)
+		super().__init__(*args, **kwargs)
+
 	class Meta:
 		model = DateTimeWork
 		fields = [
@@ -148,10 +152,10 @@ class DoctorAccountWorkForm(forms.ModelForm):
 		if datetime.date.today() > date_from:
 			raise ValidationError("This day has already been")
 
-		if visit_time < 0 or visit_time > 90:
-			raise ValidationError("Time of visit should be between 0 and 90 min")
+		if visit_time < 0 or visit_time > 55:
+			raise ValidationError("Time of visit should be between 0 and 55 min")
 
-		if DateTimeWork.objects.filter(date_from=date_from) or \
-				DateTimeWork.objects.filter(date_to=date_to) or \
-				DateTimeWork.objects.filter(date_from=date_to):
+		if DateTimeWork.objects.filter(date_from=date_from, doctor_id=self.request.user.pk) or \
+				DateTimeWork.objects.filter(date_to=date_to, doctor_id=self.request.user.pk) or \
+				DateTimeWork.objects.filter(date_from=date_to, doctor_id=self.request.user.pk):
 			raise ValidationError("Working times is already set")

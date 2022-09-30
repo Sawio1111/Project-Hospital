@@ -3,22 +3,26 @@ import datetime
 from django.shortcuts import render
 from django.views import View
 from django.urls import reverse_lazy
-from django.contrib.auth import login, logout
+from django.contrib.auth import login
 from django.views.generic import CreateView, UpdateView, FormView
 from django.contrib.auth.views import LoginView, LogoutView, get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import RegistrationForm, UpdateProfileForm, DoctorAccountWorkForm, ChooseServiceForm
-from .models import DateTimeWork, Qualification
+from .models import DateTimeWork, Qualification, Service
 
 User = get_user_model()
 
 
 class MainPageView(View):
 	template_name = 'website/main_page.html'
+	context = {}
 
 	def get(self, request, *args, **kwargs):
-		return render(request, template_name=self.template_name)
+		services = Service.objects.filter().order_by('?')[:4]
+		if len(services) >= 4:
+			self.context['services'] = services
+		return render(request, template_name=self.template_name, context=self.context)
 
 
 class LoginToWebsiteView(LoginView):
@@ -74,10 +78,6 @@ class PatientAccountUpdateView(LoginRequiredMixin, UpdateView):
 class PatientChooseServiceView(LoginRequiredMixin, View):
 	template_name = 'website/patient_choose.html'
 	form_class = ChooseServiceForm
-	# model = Qualification
-	# success_url = reverse_lazy('patient-choose')
-	# extra_context = {
-	# }
 
 	def get(self, request, *args, **kwargs):
 		form = self.form_class()
@@ -95,10 +95,25 @@ class PatientChooseServiceView(LoginRequiredMixin, View):
 				doctor__qualification__service=service,
 				status=2
 			)
+			visits_context = {}
+			for date_time_work in visits_allowed:
+				list_time_visit = []
+				time_from = datetime.datetime.combine(visit_date, date_time_work.time_from)
+				time_to = datetime.datetime.combine(visit_date, date_time_work.time_to)
+				new_time = time_from
+				list_time_visit.append(new_time.strftime('%H:%M'))
+				while new_time <= time_to:
+					new_time = (new_time + datetime.timedelta(minutes=date_time_work.visit_time))
+					if '13' not in new_time.strftime('%H:%M'):
+						list_time_visit.append(new_time.strftime('%H:%M'))
+				if list_time_visit:
+					visits_context[date_time_work.doctor] = list_time_visit
+
 			return render(request, self.template_name, context={
 				'form': form,
-				'visit_allowed': visits_allowed}
-						  )
+				'visit_context': visits_context,
+				'date': visit_date
+			})
 		return render(request, self.template_name, context={'form': form})
 
 
@@ -120,6 +135,11 @@ class DoctorAccountWorkView(LoginRequiredMixin, FormView):
 	def get(self, request, *args, **kwargs):
 		self.extra_context['appointments'] = DateTimeWork.objects.filter(doctor_id=self.request.user.pk)
 		return super().get( request, *args, **kwargs)
+
+	def get_form_kwargs(self):
+		form_kwargs = super().get_form_kwargs()
+		form_kwargs['request'] = self.request
+		return form_kwargs
 
 	def form_valid(self, form):
 		cd = form.cleaned_data

@@ -5,23 +5,20 @@
 {% endblock head %}
 
 {% block content %}
+            {% if services %}
             <div class="container-fluid mt-5 bg-light rounded-4 border border-dark border-2">
                 <div class="row text-center">
-                    <p class="text-center mt-3 fs-5 fw-bold">Nasze najpopularniejsze usługi</p>
-                <div class="col">
-                    <p class="bg-dark rounded-4 fw-bold text-white">Usługa</p>
-                </div>
-                <div class="col">
-                    <p class="bg-dark rounded-4 fw-bold text-white">Usługa</p>
-                </div>
-                <div class="col">
-                    <p class="bg-dark rounded-4 fw-bold text-white">Usługa</p>
-                </div>
-                <div class="col">
-                    <p class="bg-dark rounded-4 fw-bold text-white">Usługa</p>
-                </div>
+                    <p class="text-center mt-3 fs-5 fw-bold">Our sample services</p>
+                    <p><a class="btn btn-dark fw-bold" href="{% url  'patient-choose' %}">Book service</a></p>
+                    {% for service in services %}
+                    <div class="col">
+                        <p class="bg-dark rounded-4 fw-bold text-white">{{ service.name }}</p>
+                        <p>{{ service.description }}</p>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
+            {% endif %}
         <div class="cointaner mx-1">
                 <div class="container-fluid mt-3 bg-light rounded-4 border border-dark border-2">
                     <div class="row">

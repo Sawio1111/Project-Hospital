@@ -42,10 +42,23 @@ class DateTimeWork(models.Model):
 		(2, 'approved'),
 	)
 
-	doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='doctor')
+	doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='doctor_date_time_work')
 	date_from = models.DateField(null=False)
 	date_to = models.DateField(null=False)
 	visit_time = models.SmallIntegerField(null=False)
 	time_from = models.TimeField(null=False)
 	time_to = models.TimeField(null=False)
+	status = models.SmallIntegerField(default=1, choices=status)
+
+
+class Appointment(models.Model):
+	status = (
+		(1, 'created'),
+		(2, 'confirmed'),
+		(3,'archived')
+	)
+	patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='patient_appointment')
+	doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='doctor_appointment')
+	date = models.DateField()
+	time = models.TimeField()
 	status = models.SmallIntegerField(default=1, choices=status)
