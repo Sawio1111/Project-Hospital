@@ -27,8 +27,16 @@ urlpatterns = [
     path('registration/', website.RegistrationView.as_view(), name='registration'),
     path('account/profile/', website.PatientAccountPanelView.as_view(), name='patient-panel'),
     path('account/book/', website.PatientChooseServiceView.as_view(), name='patient-choose'),
+    path('account/book/<str:date_visit>/<str:time>/<int:doctor_pk>/<int:service_pk>/',
+         website.PatientAppointmentCreateView.as_view(), name='patient-create-appointment'),
+    path('account/book/<int:pk>/', website.PatientCancelAppointment.as_view(), name='patient-cancel'),
+    path('account/opinion/', website.PatientAddOpinion.as_view(), name='patient-opinion'),
+
     path('account/profile/doctor/', website.DoctorAccountPanelView.as_view(), name='doctor-panel'),
     path('account/work/', website.DoctorAccountWorkView.as_view(), name='doctor-work'),
+    path('account/patients/', website.DoctorPatientsView.as_view(), name='doctor-patients'),
+
+
     path('account/profile/administrator', website.AdministratorAccountPanelView.as_view(), name='admin-panel'),
     path('account/update/<int:pk>/', website.PatientAccountUpdateView.as_view(), name='patient-update'),
     path('about-us/privacy-policy-and-regulation/', website.PrivacyAndRegulationView.as_view(), name='policy-regulation'),

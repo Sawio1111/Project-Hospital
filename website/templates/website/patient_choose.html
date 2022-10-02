@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block head %}
     <title>Choose appointment</title>
@@ -8,7 +9,7 @@
     {% load crispy_forms_tags %}
     <div class="container-fluid w-50 mt-5 bg-light rounded-4 border border-dark border-2 text-center">
     <p class="text-dark fw-bold fs-4">Search for term</p>
-        <form method="post">
+        <form id="form_id" method="post">
             {% csrf_token %}
 
             {{ form|crispy }}
@@ -17,27 +18,36 @@
             <button class="btn btn-dark" type="submit">Select</button>
         </form>
     </div>
-    {% if visit_context %}
-    <div class="container-fluid w-100 mt-5 bg-light rounded-4 border border-dark border-2 text-center">
-        {% for visit in visit_context.items %}
-            <div class="list-group">
-            <p class="fw-bold fs-3">{{ visit.0.qualification.degree }}: {{ visit.0.first_name }}
-                {{ visit.0.last_name }}</p>{{ date }}<br>
-            {% for time in visit.1 %}
-                <form method="GET" action="{% url 'main' %}">
-                {% csrf_token %}
-                    <input value="{{ visit.0 }}" name="doctor" hidden>
-                    <input value="{{ date }}" name="date" hidden>
-                    <input value="{{ time }}" name="time" hidden>
-                    <button class="list-group-item btn fw-bold btn-light w-100" type="submit">{{ time }}</button>
-                </form>
-                <a class="list-group-item btn fw-bold" href="{% url 'main'  %}">{{ time }}</a>
-            {% endfor %}
-            <br>
+        <div class="container-fluid w-50 mt-3 bg-light rounded-4 border border-dark border-2 text-center">
+            <div class="row text-center fst-italic">
+                <div class="col">
+                    <button class="btn btn-sm" id="previous_month">Previous month</button>
+                </div>
+                <div class="col">
+                    <button class="btn btn-sm" id="previous_day">Previous day</button>
+                </div>
+                <div class="col">
+                    <button class="btn btn-sm" id="next_day">Next day</button>
+                </div>
+                <div class="col">
+                    <button class="btn btn-sm" id="next_month">Next month</button>
+                </div>
             </div>
-        {% endfor %}
-    </div>
+        </div>
+    {% if visit_context %}
+        <div class="container-fluid w-100 mt-3 bg-light rounded-4 border border-dark border-2 text-center">
+            {% for visit in visit_context.items %}
+                <div class="list-group">
+                <p class="fw-bold fs-3">{{ visit.0.qualification.degree }}: {{ visit.0.first_name }}
+                    {{ visit.0.last_name }}</p>{{ date }}<br>
+                {% for time in visit.1 %}
+                    <a class="list-group-item btn fw-bold"
+                       href="{% url 'patient-create-appointment' date time visit.0.pk visit.0.qualification.service.pk %}">{{ time }}</a>
+                {% endfor %}
+                <br>
+                </div>
+            {% endfor %}
+        </div>
     {% endif %}
-    <script>
-    </script>
+    <script defer src="{% static 'js/patient_choose.js' %}"></script>
 {% endblock content %}

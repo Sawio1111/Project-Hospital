@@ -15,8 +15,52 @@
                 <a class="btn btn-dark btn-sm" href="{% url 'patient-update' user.id  %}">Settings Account</a>
             </div>
             <div class="col">
+                <a class="btn btn-dark btn-sm" href="{% url 'patient-opinion' %}">Add your opinion</a>
+            </div>
+            <div class="col">
                 <a class="btn btn-dark btn-sm" href="{% url 'main'%}">Home</a>
             </div>
         </div>
     </div>
+    {% if appointments %}
+    <div class="container-fluid w-100 mt-3 bg-light rounded-4 border border-dark border-2 text-center">
+        <p class="fw-bold fs-4">Your booked appointments</p>
+            <div class="row fw-bold">
+                <div class="col">
+                    <p>Date</p>
+                </div>
+                <div class="col">
+                    <p>Time</p>
+                </div>
+                <div class="col">
+                    <p>Doctor</p>
+                </div>
+                <div class="col">
+                    <p>Service</p>
+                </div>
+                <div class="col">
+                    <p>Settings</p>
+                </div>
+            </div>
+        {% for appointment in appointments %}
+            <div class="row">
+                <div class="col">
+                    <p>{{ appointment.date }}</p>
+                </div>
+                <div class="col">
+                    <p>{{ appointment.time }}</p>
+                </div>
+                <div class="col">
+                    <p>{{ appointment.doctor }}</p>
+                </div>
+                <div class="col">
+                    <p>{{ appointment.doctor.qualification.service.name }}</p>
+                </div>
+                <div class="col">
+                    <a class="btn btn-danger btn-sm" href="{% url 'patient-cancel' appointment.pk %}">Cancel</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 {% endblock content %}

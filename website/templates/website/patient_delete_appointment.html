@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Account Patient</title>
+{% endblock head %}
+
+{% block content %}
+    <div class="container-fluid w-100 mt-5 bg-light rounded-4 border border-dark border-2 text-center">
+        <p>You are absolutely sure to cancel this appointment ?</p>
+        <div class="row">
+            <div class="col">
+                <a class="btn btn-sm btn-dark" href="{% url 'patient-panel' %}">No</a>
+            </div>
+            <div class="col">
+                <form method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-danger" type="submit">Yes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

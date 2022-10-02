@@ -1,10 +1,9 @@
-import datetime
-
 from django import forms
+from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.core.validators import ValidationError
 
-from .models import DateTimeWork, Qualification, Service
+from .models import DateTimeWork, Service, Opinion
 from .widget import DatePickerInput, TimePickerInput
 
 User = get_user_model()
@@ -101,8 +100,25 @@ class ChooseServiceForm(forms.Form):
 		form = super().clean()
 		visit_date = form.get('visit_date')
 
-		if datetime.date.today() > visit_date:
+		if visit_date == None:
+			raise ValidationError("Set date")
+
+		if timezone.now().date() > visit_date:
 			raise ValidationError("This date has already been")
+
+
+class CreateOpinionForm(forms.ModelForm):
+
+	class Meta:
+		model = Opinion
+		fields = [
+			'rating',
+			'description',
+		]
+
+		widgets = {
+			'description': forms.Textarea(attrs={'rows': 5, 'cols': 100}),
+		}
 
 
 class DoctorAccountWorkForm(forms.ModelForm):
@@ -149,7 +165,7 @@ class DoctorAccountWorkForm(forms.ModelForm):
 		if time_from >= time_to:
 			raise ValidationError("Wrong times")
 
-		if datetime.date.today() > date_from:
+		if timezone.now().date() > date_from:
 			raise ValidationError("This day has already been")
 
 		if visit_time < 0 or visit_time > 55:

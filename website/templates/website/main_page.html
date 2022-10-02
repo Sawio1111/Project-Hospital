@@ -9,7 +9,7 @@
             <div class="container-fluid mt-5 bg-light rounded-4 border border-dark border-2">
                 <div class="row text-center">
                     <p class="text-center mt-3 fs-5 fw-bold">Our sample services</p>
-                    <p><a class="btn btn-dark fw-bold" href="{% url  'patient-choose' %}">Book service</a></p>
+                    <p><a class="btn fw-bold btn-sm text-start" href="{% url  'patient-choose' %}">Book service</a></p>
                     {% for service in services %}
                     <div class="col">
                         <p class="bg-dark rounded-4 fw-bold text-white">{{ service.name }}</p>
@@ -19,25 +19,34 @@
                 </div>
             </div>
             {% endif %}
-        <div class="cointaner mx-1">
+        <div class="container mx-1">
                 <div class="container-fluid mt-3 bg-light rounded-4 border border-dark border-2">
                     <div class="row">
                         <p class="text-center fw-bold fs-5">Nasze artykuły</p>
                 </div>
         </div>
         </div>
-        <div class="cointaner mx-1">
+        <div class="container mx-1">
             <div class="container-fluid mt-3 bg-light rounded-4 border border-dark border-2">
                 <div class="row">
                     <p class="text-center fw-bold fs-5">Gdzie nas szukać</p>
              </div>
         </div>
         </div>
-        <div class="cointaner mx-1">
-            <div class="container-fluid mt-3 bg-light rounded-4 border border-dark border-2">
+        {% if opinions %}
+        <div class="container mx-1">
+            <div class="container-fluid mt-3 bg-light rounded-4 border border-dark border-2 pb-4">
                 <div class="row">
-                    <p class="text-center fw-bold fs-5">Opinie</p>
-             </div>
+                    <p class="text-center fw-bold fs-5">Opinions</p>
+                </div>
+                {% for opinion in opinions %}
+                <div class="container-fluid border border-dark rounded-4 mt-3 w-75">
+                    <p class="text-center fw-bold">{{ opinion.rating }}</p>
+                    <p class="text-center">{{ opinion.description }}</p>
+                    <p class="text-end">{{ opinion.author.first_name }}</p>
+                </div>
+                {% endfor %}
+            </div>
         </div>
-        </div>
+        {% endif %}
 {% endblock content %}

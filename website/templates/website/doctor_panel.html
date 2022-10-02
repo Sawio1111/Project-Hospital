@@ -11,6 +11,33 @@
             <div class="col">
                 <a class="btn btn-dark btn-sm" href="{% url 'doctor-work' %}">Set up your work time</a>
             </div>
+            <div class="col">
+                <a class="btn btn-dark btn-sm" href="{% url 'doctor-patients' %}">Your all patients</a>
+            </div>
+            <div class="col">
+                <a class="btn btn-dark btn-sm" href="#">Add article</a>
+            </div>
+            <div class="col">
+                <a class="btn btn-dark btn-sm" href="#">Search for patience</a>
+            </div>
         </div>
     </div>
+    {% if today_appointments %}
+     <div class="container-fluid w-100 mt-3 bg-light rounded-4 border border-dark border-2 text-center">
+        <p class="text-dark fw-bold fs-5">Today appointments</p>
+             {% for appointment in today_appointments %}
+                 <div class="row mb-1">
+                    <div class="col">
+                        {{ appointment.patient }}
+                    </div>
+                     <div class="col">
+                        {{ appointment.time }}
+                    </div>
+                     <div class="col">
+                        <a class="btn btn-sm btn-dark" href="#">Start appointment</a>
+                    </div>
+                 </div>
+             {% endfor %}
+     </div>
+    {% endif %}
 {% endblock content %}
