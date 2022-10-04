@@ -75,6 +75,20 @@ class Appointment(models.Model):
 	created = models.TimeField(auto_now_add=True, null=True)
 
 
+class AppointmentNotes(models.Model):
+	appointment = models.ForeignKey(
+		Appointment, on_delete=models.CASCADE,
+		primary_key=True,
+		unique=True,
+		related_name='appointment')
+	interview = models.TextField(null=True)
+	diagnosis = models.CharField(max_length=2048, null=True)
+	recommendations = models.CharField(max_length=2048, null=True)
+	medications = models.CharField(max_length=2048, null=True)
+	remarks = models.TextField(null=True)
+	created = models.DateTimeField(auto_now_add=True)
+
+
 class Opinion(models.Model):
 	status = (
 		(1, 'not approved'),

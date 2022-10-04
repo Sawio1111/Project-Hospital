@@ -34,7 +34,8 @@
                         {{ appointment.time }}
                     </div>
                      <div class="col">
-                        <a class="btn btn-sm btn-dark" href="#">Start appointment</a>
+                        <a class="btn btn-sm btn-dark"
+                           href="{% url 'doctor-start-appointment' appointment.pk %}">Start appointment</a>
                     </div>
                  </div>
              {% endfor %}

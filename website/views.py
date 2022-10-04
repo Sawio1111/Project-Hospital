@@ -1,7 +1,7 @@
 import datetime
 
 from django.utils import timezone
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.urls import reverse_lazy
 from django.contrib.auth import login
@@ -9,8 +9,12 @@ from django.views.generic import CreateView, UpdateView, FormView, RedirectView,
 from django.contrib.auth.views import LoginView, LogoutView, get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .forms import RegistrationForm, UpdateProfileForm, DoctorAccountWorkForm, ChooseServiceForm, CreateOpinionForm
-from .models import DateTimeWork, Service, TimeAppointment, Appointment, Opinion
+from .forms import (
+	RegistrationForm, UpdateProfileForm, DoctorAccountWorkForm, ChooseServiceForm, CreateOpinionForm,
+	CreateAppointmentNotesForm
+)
+
+from .models import DateTimeWork, Service, TimeAppointment, Appointment, Opinion, AppointmentNotes
 
 User = get_user_model()
 
@@ -69,7 +73,7 @@ class PatientAccountPanelView(LoginRequiredMixin, View):
 	context = {}
 
 	def get(self, request, *args, **kwargs):
-		self.context['appointments'] = Appointment.objects.filter(patient_id=request.user.pk)
+		self.context['appointments'] = Appointment.objects.filter(patient_id=request.user.pk, status=1)
 		return render(request, template_name=self.template_name, context=self.context)
 
 
@@ -182,11 +186,20 @@ class PatientAddOpinion(LoginRequiredMixin, FormView):
 		return response
 
 
+class PatientListAppointmentView(LoginRequiredMixin, ListView):
+	template_name = 'website/patient_timeline.html'
+
+	def get_queryset(self):
+		return Appointment.objects.filter(patient_id=self.kwargs['patient_pk'], status=2).order_by('date')
+
+
 class DoctorAccountPanelView(LoginRequiredMixin, View):
 	template_name = 'website/doctor_panel.html'
 
 	def get(self, request, *args, **kwargs):
-		today_appointments = Appointment.objects.filter(doctor_id=request.user.pk).order_by('time')
+		if request.session["today_appointment"]:
+			del request.session["today_appointment"]
+		today_appointments = Appointment.objects.filter(doctor_id=request.user.pk, status=1).order_by('time')
 		return render(request, template_name=self.template_name, context={'today_appointments': today_appointments})
 
 
@@ -244,6 +257,36 @@ class DoctorPatientsView(LoginRequiredMixin, ListView):
 		queryset = Appointment.objects.filter(doctor=self.request.user).values_list('patient_id').distinct()
 		unique_patient = [User.objects.get(pk=patient_id[0]) for patient_id in queryset]
 		return unique_patient
+
+
+class DoctorStartAppointmentView(LoginRequiredMixin, FormView):
+	template_name = 'website/start_appointment.html'
+	form_class = CreateAppointmentNotesForm
+	success_url = reverse_lazy('doctor-panel')
+	extra_context = {}
+
+	def get(self, request, *args, **kwargs):
+		appointment = get_object_or_404(Appointment, pk=self.kwargs['appointment_pk'])
+		self.extra_context['appointment'] = appointment
+		request.session['today_appointment'] = appointment.pk
+		return super().get(self, request, *args, **kwargs)
+
+	def form_valid(self, form):
+		cd = form.cleaned_data
+		appointment_pk = self.kwargs['appointment_pk']
+		appointment = get_object_or_404(Appointment, pk=appointment_pk)
+		appointment.status = 2
+		appointment.save()
+
+		AppointmentNotes.objects.create(
+			appointment=appointment,
+			interview=cd['interview'],
+			diagnosis=cd['diagnosis'],
+			recommendations=cd['recommendations'],
+			medications=cd['medications'],
+			remarks=cd['remarks'],
+		)
+		return super().form_valid(form)
 
 
 class AdministratorAccountPanelView(LoginRequiredMixin, View):

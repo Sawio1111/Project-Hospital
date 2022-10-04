@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.core.validators import ValidationError
 
-from .models import DateTimeWork, Service, Opinion
+from .models import DateTimeWork, Service, Opinion, AppointmentNotes
 from .widget import DatePickerInput, TimePickerInput
 
 User = get_user_model()
@@ -175,3 +175,31 @@ class DoctorAccountWorkForm(forms.ModelForm):
 				DateTimeWork.objects.filter(date_to=date_to, doctor_id=self.request.user.pk) or \
 				DateTimeWork.objects.filter(date_from=date_to, doctor_id=self.request.user.pk):
 			raise ValidationError("Working times is already set")
+
+
+class CreateAppointmentNotesForm(forms.ModelForm):
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self.fields['interview'].required = False
+		self.fields['diagnosis'].required = False
+		self.fields['recommendations'].required = False
+		self.fields['medications'].required = False
+		self.fields['remarks'].required = False
+
+	class Meta:
+		model = AppointmentNotes
+		fields = [
+			'interview',
+			'diagnosis',
+			'recommendations',
+			'medications',
+			'remarks',
+		]
+
+		widgets = {
+			'interview': forms.Textarea(attrs={'rows': 10, 'cols': 100}),
+			'diagnosis': forms.Textarea(attrs={'rows': 4, 'cols': 100}),
+			'recommendations': forms.Textarea(attrs={'rows': 4, 'cols': 100}),
+			'medications': forms.Textarea(attrs={'rows': 4, 'cols': 100}),
+			'remarks': forms.Textarea(attrs={'rows': 10, 'cols': 100})
+		}

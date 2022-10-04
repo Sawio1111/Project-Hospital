@@ -31,10 +31,13 @@ urlpatterns = [
          website.PatientAppointmentCreateView.as_view(), name='patient-create-appointment'),
     path('account/book/<int:pk>/', website.PatientCancelAppointment.as_view(), name='patient-cancel'),
     path('account/opinion/', website.PatientAddOpinion.as_view(), name='patient-opinion'),
+    path('account/timeline/<int:patient_pk>/', website.PatientListAppointmentView.as_view(), name='patient-timeline'),
 
     path('account/profile/doctor/', website.DoctorAccountPanelView.as_view(), name='doctor-panel'),
     path('account/work/', website.DoctorAccountWorkView.as_view(), name='doctor-work'),
     path('account/patients/', website.DoctorPatientsView.as_view(), name='doctor-patients'),
+    path('account/appointment/<int:appointment_pk>/',
+         website.DoctorStartAppointmentView.as_view(), name='doctor-start-appointment'),
 
 
     path('account/profile/administrator', website.AdministratorAccountPanelView.as_view(), name='admin-panel'),

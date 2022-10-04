@@ -37,10 +37,10 @@
                         <a class="nav-link" href="#"><i class="fas fa-bell pe-2"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-heart pe-2"></i></a>
+                        <i class="btn btn-dark btn-rounded disabled text-white" id="currentDate"></i>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-heart pe-2"></i></a>
+                        <i class="btn btn-dark btn-rounded disabled text-white mx-2" id="currentTime"></i>
                     </li>
                     {% if user.is_authenticated %}
                     <li class="nav-item">
@@ -81,5 +81,6 @@
         </ul>
      </footer>
     <script defer src="{% static 'js/bootstrap.js' %}"></script>
+    <script defer src="{% static 'js/base.js' %}"></script>
 </body>
 </html>

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Account Doctor</title>
+{% endblock head %}
+
+{% block content %}
+    {% load crispy_forms_tags %}
+    <div class="container-fluid w-75 mt-5 bg-light rounded-4 border border-dark border-2 text-center">
+    <p class="fs-4 fw-bold">Consultation template</p>
+        <form method="post">
+            {% csrf_token %}
+
+            {{ form|crispy }}
+
+            <button class="btn btn-danger mt-2 w-15" type="submit">End appointment</button>
+        </form>
+        <a class="btn btn-dark mt-1 mb-3 w-15" href="{% url 'patient-timeline' appointment.patient.pk %}">User Timeline</a>
+    </div>
+{% endblock content %}

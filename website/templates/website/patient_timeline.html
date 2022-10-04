@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Account Doctor</title>
+{% endblock head %}
+
+{% block content %}
+    {% if request.session.today_appointment%}
+    <div class="container-fluid w-15 mt-2 bg-light rounded-4 border border-dark border-2 text-center">
+        <a class="btn btn-dark btn-sm w-100 m-auto" href="{% url 'doctor-start-appointment' request.session.today_appointment %}">Back</a>
+    {% endif %}
+    </div>
+    {% for appointment in object_list %}
+        <div class="container-fluid w-75 mt-2 bg-light rounded-4 border border-dark border-2 text-center">
+            <div class="row">
+                <i class="fw-bold fs-5">
+                    {{ appointment.date }} {{ appointment.doctor.qualification.service }} {{ appointment.doctor }}</i>
+            </div>
+            <div class="row">
+                {% for appointmentnotes in appointment.appointment.all %}
+                    <p>Interview: {% if appointmentnotes.interview == None %}No data
+                    {% else %}{{ appointmentnotes.interview }}{% endif %}</p>
+                    <p>Diagnosis: {% if appointmentnotes.diagnosis == None %}No data
+                    {% else %}{{ appointmentnotes.diagnosis }}{% endif %}</p>
+                    <p>Recommendations: {% if appointmentnotes.recomendations == None %}No data
+                    {% else %}{{ appointmentnotes.recommendations }}{% endif %}</p>
+                    <p>Medications: {% if appointmentnotes.medications == None %}No data
+                    {% else %}{{ appointmentnotes.medications }}{% endif %}</p>
+                    <p>Remarks: {% if appointmentnotes.remarks == None %}No data
+                    {% else %}{{ appointmentnotes.remarks }}{% endif %}</p>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock content %}
