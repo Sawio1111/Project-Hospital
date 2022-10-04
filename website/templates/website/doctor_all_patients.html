@@ -9,10 +9,10 @@
         <p class="text-dark fw-bold fs-4">Your all patients</p>
         {% if object_list %}
 
-            {% for appointment in object_list %}
+            {% for patient in object_list %}
                 <div class="row mb-1">
                     <div class="col">
-                        {{ appointment.patient }}
+                        {{ patient }}
                     </div>
                     <div class="col">
                         <a class="btn btn-dark btn-sm" href="#">User Timeline only your appointment</a>

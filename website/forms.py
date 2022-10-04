@@ -103,7 +103,7 @@ class ChooseServiceForm(forms.Form):
 		if visit_date == None:
 			raise ValidationError("Set date")
 
-		if timezone.now().date() > visit_date:
+		if timezone.localtime(timezone.now()).date() > visit_date:
 			raise ValidationError("This date has already been")
 
 
@@ -165,7 +165,7 @@ class DoctorAccountWorkForm(forms.ModelForm):
 		if time_from >= time_to:
 			raise ValidationError("Wrong times")
 
-		if timezone.now().date() > date_from:
+		if timezone.localtime(timezone.now()).date() > date_from:
 			raise ValidationError("This day has already been")
 
 		if visit_time < 0 or visit_time > 55:

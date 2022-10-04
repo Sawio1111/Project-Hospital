@@ -241,8 +241,9 @@ class DoctorPatientsView(LoginRequiredMixin, ListView):
 	ordering = ['patient']
 
 	def get_queryset(self):
-		queryset = Appointment.objects.filter(doctor=self.request.user)
-		return set(queryset)
+		queryset = Appointment.objects.filter(doctor=self.request.user).values_list('patient_id').distinct()
+		unique_patient = [User.objects.get(pk=patient_id[0]) for patient_id in queryset]
+		return unique_patient
 
 
 class AdministratorAccountPanelView(LoginRequiredMixin, View):
