@@ -15,7 +15,7 @@
                         {{ patient }}
                     </div>
                     <div class="col">
-                        <a class="btn btn-dark btn-sm" href="#">User Timeline only your appointment</a>
+                        <a class="btn btn-dark btn-sm" href="{% url 'patient-timeline' patient.pk %}">User Timeline</a>
                     </div>
                 </div>
             {% endfor %}

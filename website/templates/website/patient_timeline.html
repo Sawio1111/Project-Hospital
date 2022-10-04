@@ -7,7 +7,7 @@
 {% block content %}
     {% if request.session.today_appointment%}
     <div class="container-fluid w-15 mt-2 bg-light rounded-4 border border-dark border-2 text-center">
-        <a class="btn btn-dark btn-sm w-100 m-auto" href="{% url 'doctor-start-appointment' request.session.today_appointment %}">Back</a>
+        <a class="btn btn-dark btn-sm w-100 my-2" href="{% url 'doctor-start-appointment' request.session.today_appointment %}">Back</a>
     {% endif %}
     </div>
     {% for appointment in object_list %}

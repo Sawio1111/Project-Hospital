@@ -37,4 +37,5 @@ window.onload = () => {
         inputDate.value = `${next_day.getFullYear()}-${(`0` + (next_day.getMonth() + 1)).slice(-2)}-${(`0` + next_day.getDate()).slice(-2)}`
         form.submit()
     })
+
 }

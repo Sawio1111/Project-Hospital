@@ -197,7 +197,7 @@ class DoctorAccountPanelView(LoginRequiredMixin, View):
 	template_name = 'website/doctor_panel.html'
 
 	def get(self, request, *args, **kwargs):
-		if request.session["today_appointment"]:
+		if "today_appointment" in request.session:
 			del request.session["today_appointment"]
 		today_appointments = Appointment.objects.filter(doctor_id=request.user.pk, status=1).order_by('time')
 		return render(request, template_name=self.template_name, context={'today_appointments': today_appointments})

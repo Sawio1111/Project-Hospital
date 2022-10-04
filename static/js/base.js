@@ -17,5 +17,6 @@ window.onload = () => {
         time.getMinutes() + ':' +
         time.getSeconds();
 }, 1000);
+    
 }
 

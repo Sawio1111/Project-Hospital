@@ -49,5 +49,8 @@
             {% endfor %}
         </div>
     {% endif %}
-    <script defer src="{% static 'js/patient_choose.js' %}"></script>
 {% endblock content %}
+
+{% block js %}
+    <script defer src="{% static 'js/patient_choose.js' %}"></script>
+{% endblock js %}
