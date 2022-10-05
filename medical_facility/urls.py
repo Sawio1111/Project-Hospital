@@ -50,6 +50,7 @@ urlpatterns = [
     path('account/service/create', website.AdministratorCreateServiceView.as_view(), name='admin-create-service'),
     path('account/service/delete/<int:pk>',
          website.AdministratorDeleteServiceView.as_view(), name='admin-delete-service'),
+    path('account/opinion/list/', website.AdministratorListOpinionsView.as_view(), name='admin-list-opinions'),
 
 
     path('about-us/privacy-policy-and-regulation/', website.PrivacyAndRegulationView.as_view(), name='policy-regulation'),

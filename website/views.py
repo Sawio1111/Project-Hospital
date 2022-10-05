@@ -323,7 +323,7 @@ class AdministratorCreateServiceView(LoginRequiredMixin, CreateView):
 	success_url = reverse_lazy('admin-create-service')
 
 	def get(self, request, *args, **kwargs):
-		services = Service.objects.all()
+		services = Service.objects.all().order_by('-created')
 		self.extra_context['services'] = services
 		return super().get(self, request, *args, **kwargs)
 
@@ -332,6 +332,13 @@ class AdministratorDeleteServiceView(LoginRequiredMixin, DeleteView):
 	template_name = 'website/admin_delete_service.html'
 	model = Service
 	success_url = reverse_lazy('admin-create-service')
+
+
+class AdministratorListOpinionsView(LoginRequiredMixin, ListView):
+	template_name = 'website/admin_opinions.html'
+	queryset = Opinion.objects.all()
+	paginate_by = 5
+	# ordering = ['created']
 
 
 class PrivacyAndRegulationView(View):
