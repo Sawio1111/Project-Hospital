@@ -141,3 +141,9 @@ LOGIN_URL = '/login/'
 
 SESSION_COOKIE_AGE = 30 * 60
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+
+try:
+    from website.local_settings import EMAIL_BACKEND
+except ModuleNotFoundError:
+    print("No email configuration in local_settings.py")

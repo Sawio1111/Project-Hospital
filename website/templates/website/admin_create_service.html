@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Create service</title>
+{% endblock head %}
+
+{% block content %}
+    {% load crispy_forms_tags %}
+    <div class="container-fluid w-75 mt-5 bg-light rounded-4 border border-dark border-2 text-center">
+        <p class="text-dark fw-bold fs-4">Create new service</p>
+        <form method="post">
+            {% csrf_token %}
+
+            {{ form|crispy }}
+
+            <button class="btn btn-dark btn-sm mt-3" type="submit">Add</button>
+        </form>
+    </div>
+    <div class="container-fluid w-75 mt-3 bg-light rounded-4 border border-dark border-2 text-center">
+        <p class="text-dark fw-bold fs-4">List of services</p>
+        {% for service in services %}
+            <div class="row mb-3 border">
+                <div class="col">
+                    <p class="text-dark fw-bold">{{ service.name }}</p>
+                    <p>{{ service.description }}</p>
+                </div>
+                <div class="col">
+                    <a class="btn btn-dark btn-sm mt-4" href="{% url 'admin-delete-service' service.pk %}">Delete</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}

@@ -6,7 +6,10 @@ from django.views import View
 from django.urls import reverse_lazy
 from django.contrib.auth import login
 from django.views.generic import CreateView, UpdateView, FormView, RedirectView, DeleteView, ListView
-from django.contrib.auth.views import LoginView, LogoutView, get_user_model
+from django.contrib.auth.views import (
+	LoginView, LogoutView, get_user_model, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView,
+	PasswordResetCompleteView
+)
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import (
@@ -66,6 +69,19 @@ class RegistrationView(CreateView):
 		self.object.save()
 		login(self.request, self.object)
 		return response
+
+
+class ResetPasswordView(PasswordResetView):
+	template_name = 'website/reset_password.html'
+
+
+class ResetPasswordDoneView(PasswordResetDoneView):
+	template_name = 'website/reset_password_done.html'
+
+
+class ResetPasswordConfirmView(PasswordResetConfirmView):
+	template_name = 'website/reset_password_confirm.html'
+	success_url = reverse_lazy('main')
 
 
 class PatientAccountPanelView(LoginRequiredMixin, View):
@@ -290,10 +306,32 @@ class DoctorStartAppointmentView(LoginRequiredMixin, FormView):
 
 
 class AdministratorAccountPanelView(LoginRequiredMixin, View):
-	template_name = 'website/administrator_panel.html'
+	template_name = 'website/admin_panel.html'
 
 	def get(self, request, *args, **kwargs):
 		return render(request, template_name=self.template_name)
+
+
+class AdministratorCreateServiceView(LoginRequiredMixin, CreateView):
+	template_name = 'website/admin_create_service.html'
+	model = Service
+	fields = [
+		'name',
+		'description'
+	]
+	extra_context = {}
+	success_url = reverse_lazy('admin-create-service')
+
+	def get(self, request, *args, **kwargs):
+		services = Service.objects.all()
+		self.extra_context['services'] = services
+		return super().get(self, request, *args, **kwargs)
+
+
+class AdministratorDeleteServiceView(LoginRequiredMixin, DeleteView):
+	template_name = 'website/admin_delete_service.html'
+	model = Service
+	success_url = reverse_lazy('admin-create-service')
 
 
 class PrivacyAndRegulationView(View):

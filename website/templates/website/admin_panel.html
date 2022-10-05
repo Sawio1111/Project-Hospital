@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Account Administrator</title>
+{% endblock head %}
+
+{% block content %}
+    <div class="container-fluid w-100 mt-5 bg-light rounded-4 border border-dark border-2 text-center">
+        <p><span class="text-dark fw-bold fs-4">Welcome</span>{{ user.first_name }} {{ user.last_name }}</p>
+    </div>
+    <div class="container-fluid w-100 mt-3 bg-light rounded-4 border border-dark border-2 text-center">
+        <p class="fw-bold">Management of website </p>
+        <div class="row mb-3">
+            <div class="col">
+                <a class="btn btn-dark btn-sm" href="{% url 'admin-create-service' %}">Add new service</a>
+            </div>
+        <div class="col">
+                <a class="btn btn-dark btn-sm" href="#">Patient opinion</a>
+        </div>
+        </div>
+    </div>
+    <div class="container-fluid w-100 mt-3 bg-light rounded-4 border border-dark border-2 text-center">
+        <p class="fw-bold">Management of doctors</p>
+        <div class="row mb-3">
+            <div class="col">
+                <a class="btn btn-dark btn-sm" href="#">Add new doctor</a>
+            </div>
+            <div class="col">
+                <a class="btn btn-dark btn-sm" href="#">Working time of doctors</a>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid w-100 mt-3 bg-light rounded-4 border border-dark border-2 text-center">
+        <p class="fw-bold">Management of patients</p>
+        <div class="row mb-3">
+            <div class="col">
+                <a class="btn btn-dark btn-sm" href="#">Update user personal data</a>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

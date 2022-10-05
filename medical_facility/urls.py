@@ -25,6 +25,12 @@ urlpatterns = [
     path('login/', website.LoginToWebsiteView.as_view(), name='login'),
     path('logout/', website.LogoutFromWebsiteView.as_view(), name='logout'),
     path('registration/', website.RegistrationView.as_view(), name='registration'),
+
+    path('reset_password/', website.ResetPasswordView.as_view(), name='reset_password'),
+    path('reset_password_sent/', website.ResetPasswordDoneView.as_view(), name='password_reset_done'),
+    path('reset_password/<uidb64>/<token>/', website.ResetPasswordConfirmView.as_view(), name='password_reset_confirm'),
+
+
     path('account/profile/', website.PatientAccountPanelView.as_view(), name='patient-panel'),
     path('account/book/', website.PatientChooseServiceView.as_view(), name='patient-choose'),
     path('account/book/<str:date_visit>/<str:time>/<int:doctor_pk>/<int:service_pk>/',
@@ -32,6 +38,7 @@ urlpatterns = [
     path('account/book/<int:pk>/', website.PatientCancelAppointment.as_view(), name='patient-cancel'),
     path('account/opinion/', website.PatientAddOpinion.as_view(), name='patient-opinion'),
     path('account/timeline/<int:patient_pk>/', website.PatientListAppointmentView.as_view(), name='patient-timeline'),
+    path('account/update/<int:pk>/', website.PatientAccountUpdateView.as_view(), name='patient-update'),
 
     path('account/profile/doctor/', website.DoctorAccountPanelView.as_view(), name='doctor-panel'),
     path('account/work/', website.DoctorAccountWorkView.as_view(), name='doctor-work'),
@@ -39,9 +46,12 @@ urlpatterns = [
     path('account/appointment/<int:appointment_pk>/',
          website.DoctorStartAppointmentView.as_view(), name='doctor-start-appointment'),
 
-
     path('account/profile/administrator', website.AdministratorAccountPanelView.as_view(), name='admin-panel'),
-    path('account/update/<int:pk>/', website.PatientAccountUpdateView.as_view(), name='patient-update'),
+    path('account/service/create', website.AdministratorCreateServiceView.as_view(), name='admin-create-service'),
+    path('account/service/delete/<int:pk>',
+         website.AdministratorDeleteServiceView.as_view(), name='admin-delete-service'),
+
+
     path('about-us/privacy-policy-and-regulation/', website.PrivacyAndRegulationView.as_view(), name='policy-regulation'),
 ]
 
