@@ -9,7 +9,7 @@
     <div class="container w-75 mt-5 bg-light rounded-4 border border-dark border-2 text-center">
         {% for opinion in object_list %}
             <div class="row mb-3 border">
-                <div class="row justify-content-md-center">
+                <div class="row justify-content-md-center" id="{{ opinion.pk }}">
                     <p>Rating:</p>
                     <p class="text-dark fw-bold">{{ opinion.rating }}</p>
                 </div>

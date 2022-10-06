@@ -205,7 +205,7 @@ class CreateAppointmentNotesForm(forms.ModelForm):
 		}
 
 
-class CreateDoctorView(forms.ModelForm):
+class CreateDoctorForm(forms.ModelForm):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.fields['last_name'].required = True
@@ -235,3 +235,8 @@ class CreateDoctorView(forms.ModelForm):
 			'phone_number': forms.TextInput(),
 			'pesel': forms.TextInput(),
 		}
+
+
+class SearchPatientForm(forms.Form):
+	last_name = forms.CharField(required=False)
+	pesel = forms.IntegerField(required=False)

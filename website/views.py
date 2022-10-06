@@ -12,7 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import (
 	RegistrationForm, UpdateProfileForm, DoctorAccountWorkForm, ChooseServiceForm, CreateOpinionForm,
-	CreateAppointmentNotesForm, CreateDoctorView
+	CreateAppointmentNotesForm, CreateDoctorForm, SearchPatientForm
 )
 
 from .models import DateTimeWork, Service, TimeAppointment, Appointment, Opinion, AppointmentNotes, Qualification
@@ -77,8 +77,13 @@ class ResetPasswordView(PasswordResetView):
 	def get(self, request, *args, **kwargs):
 		if "doctor_email" in request.session:
 			self.initial['email'] = request.session['doctor_email']
-			del request.session['doctor_email']
+			self.email_template_name = 'website/doctor_set_password.html'
 		return super().get(self, request, *args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		if "doctor_email" in request.session:
+			self.email_template_name = 'website/doctor_set_password.html'
+		return super().post(self, request, *args, **kwargs)
 
 
 class ResetPasswordDoneView(PasswordResetDoneView):
@@ -348,7 +353,6 @@ class AdministratorListOpinionsView(LoginRequiredMixin, ListView):
 
 
 class AdministratorOpinionStatusView(LoginRequiredMixin, RedirectView):
-	url = reverse_lazy('admin-list-opinions')
 
 	def get(self, request, *args, **kwargs):
 		opinion = get_object_or_404(Opinion, pk=self.kwargs['opinion_pk'])
@@ -360,19 +364,50 @@ class AdministratorOpinionStatusView(LoginRequiredMixin, RedirectView):
 			opinion.save()
 		return super().get(self, request, *args, **kwargs)
 
+	def get_redirect_url(self, *args, **kwargs):
+		return reverse_lazy('admin-list-opinions') + "#" + str(self.kwargs['opinion_pk'])
+
 
 class AdministratorListDoctorView(LoginRequiredMixin, ListView):
 	template_name = 'website/admin_doctors.html'
 	queryset = User.objects.filter(status=2)
+	ordering = ['last_name']
+	paginate_by = 25
 
 
-# class AdministratorDoctorWorkView(LoginRequiredMixin, FormView):
-#
+class AdministratorDoctorUpdateView(LoginRequiredMixin, UpdateView):
+	template_name = 'website/doctor_update.html'
+	success_url = reverse_lazy('admin-panel')
+	fields = [
+			'first_name',
+			'last_name',
+			'username',
+			'phone_number',
+			'pesel',
+			'sex',
+			'email',
+	]
+
+	def get_queryset(self):
+		return User.objects.filter(pk=self.kwargs['pk'], status=2)
+
+
+class AdministratorQualificationUpdateView(LoginRequiredMixin, UpdateView):
+	template_name = 'website/qualification_update.html'
+	success_url = reverse_lazy('admin-panel')
+	model = Qualification
+	fields = [
+		'salary',
+		'price',
+		'degree',
+		'service',
+		'room',
+	]
 
 
 class AdministratorCreateDoctorView(LoginRequiredMixin, FormView):
 	template_name = 'website/admin_create_doctor.html'
-	form_class = CreateDoctorView
+	form_class = CreateDoctorForm
 	success_url = reverse_lazy('reset_password')
 
 	def form_valid(self, form):
@@ -397,6 +432,41 @@ class AdministratorCreateDoctorView(LoginRequiredMixin, FormView):
 		)
 		self.request.session['doctor_email'] = cd['email']
 		return super().form_valid(form)
+
+
+class AdministratorUpdatePatientView(LoginRequiredMixin, UpdateView):
+	template_name = 'website/update_patient.html'
+	success_url = reverse_lazy('admin-search-patient')
+	fields = [
+		'first_name',
+		'last_name',
+		'pesel',
+		'sex',
+	]
+
+	def get_queryset(self):
+		return User.objects.filter(pk=self.kwargs['pk'], status=1)
+
+
+class AdministratorListPatientView(LoginRequiredMixin, View):
+	template_name = 'website/patient_list.html'
+	form_class = SearchPatientForm
+
+	def get(self, request, *args, **kwargs):
+		form = self.form_class()
+		return render(request, self.template_name, context={'form': form})
+
+	def post(self, request, *args, **kwargs):
+		form = self.form_class(request.POST)
+		users = None
+		if form.is_valid():
+			cd = form.cleaned_data
+			if cd['last_name'] == None:
+				cd['last_name'] = ''
+			if cd['pesel'] == None:
+				cd['pesel'] = ''
+			users = User.objects.filter(last_name__icontains=cd['last_name'], pesel__icontains=cd['pesel'], status=1)
+		return render(request, self.template_name, context={'users': users, 'form': form})
 
 
 class PrivacyAndRegulationView(View):

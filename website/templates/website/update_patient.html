@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Update Patient</title>
+{% endblock head %}
+
+{% block content %}
+    {% load crispy_forms_tags %}
+    <div class="container-fluid w-75 mt-5 bg-light rounded-4 border border-dark border-2 text-center">
+        <p class="text-dark fw-bold fs-4">Update personal data</p>
+        <form method="post">
+            {% csrf_token %}
+
+            {{ form|crispy }}
+
+            <button class="btn btn-dark btn-sm mt-3" type="submit">Update</button>
+        </form>
+        <a class="btn btn-dark btn-sm mb-3" href="{% url 'admin-search-patient' %}">Back</a>
+    </div>
+{% endblock content %}

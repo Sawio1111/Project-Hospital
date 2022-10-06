@@ -26,6 +26,7 @@ urlpatterns = [
     path('logout/', website.LogoutFromWebsiteView.as_view(), name='logout'),
     path('registration/', website.RegistrationView.as_view(), name='registration'),
 
+
     path('reset_password/', website.ResetPasswordView.as_view(), name='reset_password'),
     path('reset_password_sent/', website.ResetPasswordDoneView.as_view(), name='password_reset_done'),
     path('reset_password/<uidb64>/<token>/', website.ResetPasswordConfirmView.as_view(), name='password_reset_confirm'),
@@ -40,11 +41,13 @@ urlpatterns = [
     path('account/timeline/<int:patient_pk>/', website.PatientListAppointmentView.as_view(), name='patient-timeline'),
     path('account/update/<int:pk>/', website.PatientAccountUpdateView.as_view(), name='patient-update'),
 
+
     path('account/profile/doctor/', website.DoctorAccountPanelView.as_view(), name='doctor-panel'),
     path('account/work/', website.DoctorAccountWorkView.as_view(), name='doctor-work'),
     path('account/patients/', website.DoctorPatientsView.as_view(), name='doctor-patients'),
     path('account/appointment/<int:appointment_pk>/',
          website.DoctorStartAppointmentView.as_view(), name='doctor-start-appointment'),
+
 
     path('account/profile/administrator', website.AdministratorAccountPanelView.as_view(), name='admin-panel'),
     path('account/service/create', website.AdministratorCreateServiceView.as_view(), name='admin-create-service'),
@@ -55,7 +58,11 @@ urlpatterns = [
          website.AdministratorOpinionStatusView.as_view(), name='admin-status-opinion'),
     path('account/doctors/', website.AdministratorListDoctorView.as_view(), name='admin-list-doctors'),
     path('account/doctors/create/', website.AdministratorCreateDoctorView.as_view(), name='admin-create-doctor'),
-
+    path('account/doctors/update/<int:pk>/', website.AdministratorDoctorUpdateView.as_view(), name='admin-update-doctor'),
+    path('account/qualification/update/<int:pk>/',
+         website.AdministratorQualificationUpdateView.as_view(), name='admin-quali-doctor'),
+    path('account/patients/update/<int:pk>/', website.AdministratorUpdatePatientView.as_view(),name='admin-update-patient'),
+    path('account/patients/list/', website.AdministratorListPatientView.as_view(),name='admin-search-patient'),
 
     path('about-us/privacy-policy-and-regulation/', website.PrivacyAndRegulationView.as_view(), name='policy-regulation'),
 ]

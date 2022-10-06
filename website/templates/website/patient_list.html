@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Patients</title>
+{% endblock head %}
+
+{% block content %}
+    {% load crispy_forms_tags %}
+    <div class="container-fluid w-50 mt-5 bg-light rounded-4 border border-dark border-2 text-center">
+        <p class="text-dark fw-bold fs-4">Search patient</p>
+            <form method="post">
+                {% csrf_token %}
+
+                {{ form|crispy }}
+
+                <button class="btn btn-dark mt-3" type="submit">Search</button>
+            </form>
+    </div>
+    {% if users %}
+        <div class="container-fluid w-75 mt-3 bg-light rounded-4 border border-dark border-2 text-center">
+            {% for user in users %}
+                <div class="row mt-1">
+                    <div class="col">
+                        <p>{{ user }}</p>
+                    </div>
+                    <div class="col">
+                        <a class="btn border btn-dark" href="{% url 'admin-update-patient' user.pk %}">Update</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock content %}
