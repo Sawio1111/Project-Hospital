@@ -19,7 +19,7 @@
                 </div>
                 <div class="row justify-content-md-center">
                     <p>Change status:</p>
-                    <a class="text-dark fw-bold" href="#">{{ opinion.get_status_display }}</a>
+                    <a class="text-dark fw-bold" href="{% url 'admin-status-opinion' opinion.pk %}">{{ opinion.get_status_display }}</a>
                     <p></p>
                 </div>
                 <div class="row justify-content-md-center">

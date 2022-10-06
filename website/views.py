@@ -1,6 +1,5 @@
 import datetime
 
-from django.utils import timezone
 from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.urls import reverse_lazy
@@ -8,16 +7,15 @@ from django.contrib.auth import login
 from django.views.generic import CreateView, UpdateView, FormView, RedirectView, DeleteView, ListView
 from django.contrib.auth.views import (
 	LoginView, LogoutView, get_user_model, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView,
-	PasswordResetCompleteView
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import (
 	RegistrationForm, UpdateProfileForm, DoctorAccountWorkForm, ChooseServiceForm, CreateOpinionForm,
-	CreateAppointmentNotesForm
+	CreateAppointmentNotesForm, CreateDoctorView
 )
 
-from .models import DateTimeWork, Service, TimeAppointment, Appointment, Opinion, AppointmentNotes
+from .models import DateTimeWork, Service, TimeAppointment, Appointment, Opinion, AppointmentNotes, Qualification
 
 User = get_user_model()
 
@@ -73,6 +71,14 @@ class RegistrationView(CreateView):
 
 class ResetPasswordView(PasswordResetView):
 	template_name = 'website/reset_password.html'
+	initial = {
+	}
+
+	def get(self, request, *args, **kwargs):
+		if "doctor_email" in request.session:
+			self.initial['email'] = request.session['doctor_email']
+			del request.session['doctor_email']
+		return super().get(self, request, *args, **kwargs)
 
 
 class ResetPasswordDoneView(PasswordResetDoneView):
@@ -338,7 +344,59 @@ class AdministratorListOpinionsView(LoginRequiredMixin, ListView):
 	template_name = 'website/admin_opinions.html'
 	queryset = Opinion.objects.all()
 	paginate_by = 5
-	# ordering = ['created']
+	ordering = ['-created']
+
+
+class AdministratorOpinionStatusView(LoginRequiredMixin, RedirectView):
+	url = reverse_lazy('admin-list-opinions')
+
+	def get(self, request, *args, **kwargs):
+		opinion = get_object_or_404(Opinion, pk=self.kwargs['opinion_pk'])
+		if opinion.status == 1:
+			opinion.status = 2
+			opinion.save()
+		elif opinion.status == 2:
+			opinion.status = 1
+			opinion.save()
+		return super().get(self, request, *args, **kwargs)
+
+
+class AdministratorListDoctorView(LoginRequiredMixin, ListView):
+	template_name = 'website/admin_doctors.html'
+	queryset = User.objects.filter(status=2)
+
+
+# class AdministratorDoctorWorkView(LoginRequiredMixin, FormView):
+#
+
+
+class AdministratorCreateDoctorView(LoginRequiredMixin, FormView):
+	template_name = 'website/admin_create_doctor.html'
+	form_class = CreateDoctorView
+	success_url = reverse_lazy('reset_password')
+
+	def form_valid(self, form):
+		cd = form.cleaned_data
+		doctor = User.objects.create(
+			last_name=cd['last_name'],
+			first_name=cd['first_name'],
+			email=cd['email'],
+			pesel=cd['pesel'],
+			phone_number=cd['phone_number'],
+			sex=cd['sex'],
+			username=cd['username'],
+			status=2
+		)
+		qualification = Qualification.objects.create(
+			salary=cd['salary'],
+			price=cd['price'],
+			degree=cd['degree'],
+			service=cd['service'],
+			room=cd['room'],
+			doctor=doctor,
+		)
+		self.request.session['doctor_email'] = cd['email']
+		return super().form_valid(form)
 
 
 class PrivacyAndRegulationView(View):

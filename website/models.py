@@ -100,5 +100,6 @@ class Opinion(models.Model):
 	rating = models.SmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(10)], null=False)
 	description = models.CharField(max_length=2048, null=False)
 	status = models.SmallIntegerField(default=1, choices=status)
+	created = models.DateTimeField(auto_now_add=True)
 
 

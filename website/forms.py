@@ -203,3 +203,35 @@ class CreateAppointmentNotesForm(forms.ModelForm):
 			'medications': forms.Textarea(attrs={'rows': 4, 'cols': 100}),
 			'remarks': forms.Textarea(attrs={'rows': 10, 'cols': 100})
 		}
+
+
+class CreateDoctorView(forms.ModelForm):
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self.fields['last_name'].required = True
+		self.fields['first_name'].required = True
+		self.fields['email'].required = True
+		self.fields['sex'].required = True
+
+	salary = forms.FloatField(required=True, widget=forms.TextInput())
+	price = forms.FloatField(required=True, widget=forms.TextInput())
+	degree = forms.CharField(required=True)
+	service = forms.ModelChoiceField(required=True, queryset=Service.objects.all())
+	room = forms.CharField(required=True)
+
+	class Meta:
+		model = User
+		fields = [
+			'first_name',
+			'last_name',
+			'username',
+			'phone_number',
+			'pesel',
+			'sex',
+			'email',
+		]
+
+		widgets = {
+			'phone_number': forms.TextInput(),
+			'pesel': forms.TextInput(),
+		}

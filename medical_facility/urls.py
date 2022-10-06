@@ -51,6 +51,10 @@ urlpatterns = [
     path('account/service/delete/<int:pk>',
          website.AdministratorDeleteServiceView.as_view(), name='admin-delete-service'),
     path('account/opinion/list/', website.AdministratorListOpinionsView.as_view(), name='admin-list-opinions'),
+    path('account/opinion/<int:opinion_pk>/',
+         website.AdministratorOpinionStatusView.as_view(), name='admin-status-opinion'),
+    path('account/doctors/', website.AdministratorListDoctorView.as_view(), name='admin-list-doctors'),
+    path('account/doctors/create/', website.AdministratorCreateDoctorView.as_view(), name='admin-create-doctor'),
 
 
     path('about-us/privacy-policy-and-regulation/', website.PrivacyAndRegulationView.as_view(), name='policy-regulation'),
