@@ -1,5 +1,6 @@
 import datetime
 
+from django.utils import timezone
 from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.urls import reverse_lazy
@@ -226,7 +227,11 @@ class DoctorAccountPanelView(LoginRequiredMixin, View):
 	def get(self, request, *args, **kwargs):
 		if "today_appointment" in request.session:
 			del request.session["today_appointment"]
-		today_appointments = Appointment.objects.filter(doctor_id=request.user.pk, status=1).order_by('time')
+		today_appointments = Appointment.objects.filter(
+			doctor_id=request.user.pk,
+			status=1,
+			date=timezone.localtime(timezone.now())
+		).order_by('time')
 		return render(request, template_name=self.template_name, context={'today_appointments': today_appointments})
 
 
@@ -422,7 +427,7 @@ class AdministratorCreateDoctorView(LoginRequiredMixin, FormView):
 			username=cd['username'],
 			status=2
 		)
-		qualification = Qualification.objects.create(
+		Qualification.objects.create(
 			salary=cd['salary'],
 			price=cd['price'],
 			degree=cd['degree'],
@@ -467,6 +472,20 @@ class AdministratorListPatientView(LoginRequiredMixin, View):
 				cd['pesel'] = ''
 			users = User.objects.filter(last_name__icontains=cd['last_name'], pesel__icontains=cd['pesel'], status=1)
 		return render(request, self.template_name, context={'users': users, 'form': form})
+
+
+class AdministratorDoctorWorkView(LoginRequiredMixin, RedirectView):
+	url = reverse_lazy('admin-list-doctors')
+
+	def get(self, request, *args, **kwargs):
+		date_work_time = get_object_or_404(DateTimeWork, pk=self.kwargs['date_pk'])
+		if date_work_time.status == 1:
+				date_work_time.status = 2
+				date_work_time.save()
+		elif date_work_time.status == 2:
+			date_work_time.status = 1
+			date_work_time.save()
+		return super().get(self, request, *args, **kwargs)
 
 
 class PrivacyAndRegulationView(View):

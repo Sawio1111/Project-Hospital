@@ -63,6 +63,7 @@ urlpatterns = [
          website.AdministratorQualificationUpdateView.as_view(), name='admin-quali-doctor'),
     path('account/patients/update/<int:pk>/', website.AdministratorUpdatePatientView.as_view(),name='admin-update-patient'),
     path('account/patients/list/', website.AdministratorListPatientView.as_view(),name='admin-search-patient'),
+    path('account/work/<int:date_pk>/', website.AdministratorDoctorWorkView.as_view(),name='admin-work-doctor'),
 
     path('about-us/privacy-policy-and-regulation/', website.PrivacyAndRegulationView.as_view(), name='policy-regulation'),
 ]

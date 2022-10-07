@@ -5,18 +5,61 @@
 {% endblock head %}
 
 {% block content %}
-    <div class="container-fluid w-75 mt-5 bg-light rounded-4 border border-dark border-2 text-center">
+    <div class="container-fluid w-100 mt-5 bg-light rounded-4 border border-dark border-2 text-center">
         {% for doctor in object_list %}
             <div class="row border">
                 <div class="col">
                     <p class="text-dark fw-bold">{{ doctor }}</p>
                 </div>
                 <div class="col">
-                    <a class="btn btn-dark btn-sm mt-1" href="#">Working time</a>
-                    <a class="btn btn-dark btn-sm mt-1" href="{% url 'admin-update-doctor' doctor.pk %}">Update date</a>
-                    <a class="btn btn-dark btn-sm mt-1" href="{% url 'admin-quali-doctor' doctor.qualification.pk %}">Update qulification</a>
+                    <a class="btn btn-dark btn-sm mt-1" href="{% url 'admin-update-doctor' doctor.pk %}">Update data</a>
+                    <a class="btn btn-dark btn-sm mt-1" href="{% url 'admin-quali-doctor' doctor.qualification.pk %}">Update qualification</a>
                 </div>
             </div>
+            {% if doctor.doctor_date_time_work.all %}
+             <div class="row mt-1">
+                    <div class="col">
+                        <p class="fw-bold">From</p>
+                    </div>
+                    <div class="col">
+                        <p class="fw-bold">To</p>
+                    </div>
+                    <div class="col">
+                        <p class="fw-bold">From</p>
+                    </div>
+                    <div class="col">
+                        <p class="fw-bold">To</p>
+                    </div>
+                    <div class="col">
+                        <p class="fw-bold">Visit time</p>
+                    </div>
+                    <div class="col">
+                        <p class="fw-bold">status</p>
+                    </div>
+                </div>
+                    {% for datetime in doctor.doctor_date_time_work.all %}
+                        <div class="row mt-1">
+                            <div class="col">
+                                <p>{{ datetime.date_from }}</p>
+                            </div>
+                            <div class="col">
+                                <p>{{ datetime.date_to }}</p>
+                            </div>
+                            <div class="col">
+                                <p>{{ datetime.time_from }}</p>
+                            </div>
+                            <div class="col">
+                                <p>{{ datetime.time_to }}</p>
+                            </div>
+                            <div class="col">
+                                <p>{{ datetime.visit_time }}</p>
+                            </div>
+                            <div class="col">
+                                <a class="btn btn-sm btn-dark" href="{% url 'admin-work-doctor' datetime.pk %}">{{ datetime.get_status_display }}</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
         {% endfor %}
     </div>
     <div class="container w-25 mt-3 bg-light rounded-4 border border-dark border-2">

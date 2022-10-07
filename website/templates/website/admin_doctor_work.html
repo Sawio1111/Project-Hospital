@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Patients</title>
+{% endblock head %}
+
+{% block content %}
+        <div class="container-fluid w-75 mt-3 bg-light rounded-4 border border-dark border-2 text-center">
+        <p class="text-dark fw-bold fs-4">Doctor time working</p>
+            <div class="row mt-1">
+                    <div class="col">
+                        <p class="fw-bold">From</p>
+                    </div>
+                    <div class="col">
+                        <p class="fw-bold">To</p>
+                    </div>
+                    <div class="col">
+                        <p class="fw-bold">From</p>
+                    </div>
+                    <div class="col">
+                        <p class="fw-bold">To</p>
+                    </div>
+                    <div class="col">
+                        <p class="fw-bold">Visit time</p>
+                    </div>
+                    <div class="col">
+                        <p class="fw-bold">status</p>
+                    </div>
+                </div>
+            {% for doctor_work in object_list %}
+                <div class="row mt-1">
+                    <div class="col">
+                        <p>{{ doctor_work.date_from }}</p>
+                    </div>
+                    <div class="col">
+                        <p>{{ doctor_work.date_to }}</p>
+                    </div>
+                    <div class="col">
+                        <p>{{ doctor_work.time_from }}</p>
+                    </div>
+                    <div class="col">
+                        <p>{{ doctor_work.time_to }}</p>
+                    </div>
+                    <div class="col">
+                        <p>{{ doctor_work.visit_time }}</p>
+                    </div>
+                    <div class="col">
+                        <a class="btn btn-sm btn-dark" href="{% url 'admin-work-doctor' doctor_work.pk %}">{{ doctor_work.get_status_display }}</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+{% endblock content %}
