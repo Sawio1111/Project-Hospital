@@ -1,6 +1,7 @@
 import pytest
 
 from django.test import Client
+from django.contrib.auth.models import Permission
 from .utils import faker
 from website.models import Service, Qualification, Opinion
 from website.views import User
@@ -36,6 +37,8 @@ def create_patient_opinion():
 		)
 		user.set_password(faker.password())
 		user.save()
+		permission = Permission.objects.get(codename='client_permission')
+		user.user_permissions.add(permission)
 		Opinion.objects.create(
 			rating=faker.random_int(1, 10),
 			description=faker.sentence(),
@@ -65,6 +68,8 @@ def create_doctor_service_qualification():
 		)
 		doctor.set_password(faker.password())
 		doctor.save()
+		permission = Permission.objects.get(codename='doctor_permission')
+		doctor.user_permissions.add(permission)
 		Qualification.objects.create(
 			salary=faker.random_int(1000, 2000),
 			price=faker.random_int(20, 100),
