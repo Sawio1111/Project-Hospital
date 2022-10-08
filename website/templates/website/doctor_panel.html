@@ -33,6 +33,8 @@
                      <div class="col">
                         <a class="btn btn-sm btn-dark"
                            href="{% url 'doctor-start-appointment' appointment.pk %}">Start appointment</a>
+                           <a class="btn btn-danger btn-sm"
+                              href="{% url 'doctor-end-appointment' appointment.pk %}">Cancel</a>
                     </div>
                  </div>
              {% endfor %}

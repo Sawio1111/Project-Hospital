@@ -47,6 +47,8 @@ urlpatterns = [
     path('account/patients/', website.DoctorPatientsView.as_view(), name='doctor-patients'),
     path('account/appointment/<int:appointment_pk>/',
          website.DoctorStartAppointmentView.as_view(), name='doctor-start-appointment'),
+    path('account/appointment/cancel/<int:appointment_pk>/',
+         website.DoctorEndAppointmentView.as_view(), name='doctor-end-appointment'),
 
 
     path('account/profile/administrator', website.AdministratorAccountPanelView.as_view(), name='admin-panel'),

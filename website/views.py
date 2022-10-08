@@ -5,17 +5,17 @@ from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.urls import reverse_lazy
 from django.contrib.auth import login
+from django.contrib.auth.models import Permission
 from django.views.generic import CreateView, UpdateView, FormView, RedirectView, DeleteView, ListView
 from django.contrib.auth.views import (
 	LoginView, LogoutView, get_user_model, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView,
 )
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 
 from .forms import (
 	RegistrationForm, UpdateProfileForm, DoctorAccountWorkForm, ChooseServiceForm, CreateOpinionForm,
 	CreateAppointmentNotesForm, CreateDoctorForm, SearchPatientForm
 )
-
 from .models import DateTimeWork, Service, TimeAppointment, Appointment, Opinion, AppointmentNotes, Qualification
 
 User = get_user_model()
@@ -66,6 +66,8 @@ class RegistrationView(CreateView):
 		cd = form.cleaned_data
 		self.object.set_password(cd['password1'])
 		self.object.save()
+		permission = Permission.objects.get(codename='client_permission')
+		self.object.user_permissions.add(permission)
 		login(self.request, self.object)
 		return response
 
@@ -96,7 +98,8 @@ class ResetPasswordConfirmView(PasswordResetConfirmView):
 	success_url = reverse_lazy('main')
 
 
-class PatientAccountPanelView(LoginRequiredMixin, View):
+class PatientAccountPanelView(PermissionRequiredMixin, View):
+	permission_required = 'website.client_permission'
 	template_name = 'website/patient_panel.html'
 	context = {}
 
@@ -105,7 +108,12 @@ class PatientAccountPanelView(LoginRequiredMixin, View):
 		return render(request, template_name=self.template_name, context=self.context)
 
 
-class PatientAccountUpdateView(LoginRequiredMixin, UpdateView):
+class PatientAccountUpdateView(PermissionRequiredMixin, UserPassesTestMixin, UpdateView):
+	permission_required = 'website.client_permission'
+
+	def test_func(self):
+		return self.request.user == User.objects.get(pk=self.kwargs['pk'])
+
 	template_name = 'website/patient_update.html'
 	form_class = UpdateProfileForm
 	success_url = reverse_lazy('patient-panel')
@@ -114,7 +122,8 @@ class PatientAccountUpdateView(LoginRequiredMixin, UpdateView):
 		return User.objects.filter(pk=self.kwargs['pk'])
 
 
-class PatientChooseServiceView(LoginRequiredMixin, View):
+class PatientChooseServiceView(PermissionRequiredMixin, View):
+	permission_required = 'website.client_permission'
 	template_name = 'website/patient_choose.html'
 	form_class = ChooseServiceForm
 
@@ -155,7 +164,9 @@ class PatientChooseServiceView(LoginRequiredMixin, View):
 		return render(request, self.template_name, context={'form': form})
 
 
-class PatientAppointmentCreateView(LoginRequiredMixin, RedirectView):
+class PatientAppointmentCreateView(PermissionRequiredMixin, RedirectView):
+	permission_required = 'website.client_permission'
+
 	url = reverse_lazy('patient-panel')
 
 	def get(self, request, *args, **kwargs):
@@ -189,13 +200,15 @@ class PatientAppointmentCreateView(LoginRequiredMixin, RedirectView):
 		return super().get(self, request, *args, **kwargs)
 
 
-class PatientCancelAppointment(LoginRequiredMixin, DeleteView):
+class PatientCancelAppointment(PermissionRequiredMixin, DeleteView):
+	permission_required = 'website.client_permission'
 	template_name = 'website/patient_delete_appointment.html'
 	success_url = reverse_lazy('patient-panel')
 	queryset = Appointment.objects.all()
 
 
-class PatientAddOpinion(LoginRequiredMixin, FormView):
+class PatientAddOpinion(PermissionRequiredMixin, FormView):
+	permission_required = 'website.client_permission'
 	template_name = 'website/patient_opinion.html'
 	form_class = CreateOpinionForm
 	success_url = reverse_lazy('patient-panel')
@@ -214,14 +227,17 @@ class PatientAddOpinion(LoginRequiredMixin, FormView):
 		return response
 
 
-class PatientListAppointmentView(LoginRequiredMixin, ListView):
+class PatientListAppointmentView(PermissionRequiredMixin, ListView):
+	permission_required = 'website.doctor_permission'
 	template_name = 'website/patient_timeline.html'
 
 	def get_queryset(self):
 		return Appointment.objects.filter(patient_id=self.kwargs['patient_pk'], status=2).order_by('date')
 
 
-class DoctorAccountPanelView(LoginRequiredMixin, View):
+class DoctorAccountPanelView(PermissionRequiredMixin, View):
+	permission_required = 'website.doctor_permission'
+
 	template_name = 'website/doctor_panel.html'
 
 	def get(self, request, *args, **kwargs):
@@ -235,7 +251,8 @@ class DoctorAccountPanelView(LoginRequiredMixin, View):
 		return render(request, template_name=self.template_name, context={'today_appointments': today_appointments})
 
 
-class DoctorAccountWorkView(LoginRequiredMixin, FormView):
+class DoctorAccountWorkView(PermissionRequiredMixin, FormView):
+	permission_required = 'website.doctor_permission'
 	template_name = 'website/doctor_work_set.html'
 	form_class = DoctorAccountWorkForm
 	model = DateTimeWork
@@ -281,7 +298,8 @@ class DoctorAccountWorkView(LoginRequiredMixin, FormView):
 		return super().form_valid(form)
 
 
-class DoctorPatientsView(LoginRequiredMixin, ListView):
+class DoctorPatientsView(PermissionRequiredMixin, ListView):
+	permission_required = 'website.doctor_permission'
 	template_name = 'website/doctor_all_patients.html'
 	ordering = ['patient']
 
@@ -291,7 +309,8 @@ class DoctorPatientsView(LoginRequiredMixin, ListView):
 		return unique_patient
 
 
-class DoctorStartAppointmentView(LoginRequiredMixin, FormView):
+class DoctorStartAppointmentView(PermissionRequiredMixin, FormView):
+	permission_required = 'website.doctor_permission'
 	template_name = 'website/start_appointment.html'
 	form_class = CreateAppointmentNotesForm
 	success_url = reverse_lazy('doctor-panel')
@@ -321,14 +340,27 @@ class DoctorStartAppointmentView(LoginRequiredMixin, FormView):
 		return super().form_valid(form)
 
 
-class AdministratorAccountPanelView(LoginRequiredMixin, View):
+class DoctorEndAppointmentView(PermissionRequiredMixin, RedirectView):
+	permission_required = 'website.doctor_permission'
+	url = reverse_lazy('doctor-panel')
+
+	def get(self, request, *args, **kwargs):
+		appointment = get_object_or_404(Appointment, pk=self.kwargs['appointment_pk'])
+		appointment.status = 3
+		appointment.save()
+		return super().get(self, request, *args, **kwargs)
+
+
+class AdministratorAccountPanelView(PermissionRequiredMixin, View):
+	permission_required = 'website.administrator_permission'
 	template_name = 'website/admin_panel.html'
 
 	def get(self, request, *args, **kwargs):
 		return render(request, template_name=self.template_name)
 
 
-class AdministratorCreateServiceView(LoginRequiredMixin, CreateView):
+class AdministratorCreateServiceView(PermissionRequiredMixin, CreateView):
+	permission_required = 'website.administrator_permission'
 	template_name = 'website/admin_create_service.html'
 	model = Service
 	fields = [
@@ -344,20 +376,23 @@ class AdministratorCreateServiceView(LoginRequiredMixin, CreateView):
 		return super().get(self, request, *args, **kwargs)
 
 
-class AdministratorDeleteServiceView(LoginRequiredMixin, DeleteView):
+class AdministratorDeleteServiceView(PermissionRequiredMixin, DeleteView):
+	permission_required = 'website.administrator_permission'
 	template_name = 'website/admin_delete_service.html'
 	model = Service
 	success_url = reverse_lazy('admin-create-service')
 
 
-class AdministratorListOpinionsView(LoginRequiredMixin, ListView):
+class AdministratorListOpinionsView(PermissionRequiredMixin, ListView):
+	permission_required = 'website.administrator_permission'
 	template_name = 'website/admin_opinions.html'
 	queryset = Opinion.objects.all()
 	paginate_by = 5
 	ordering = ['-created']
 
 
-class AdministratorOpinionStatusView(LoginRequiredMixin, RedirectView):
+class AdministratorOpinionStatusView(PermissionRequiredMixin, RedirectView):
+	permission_required = 'website.administrator_permission'
 
 	def get(self, request, *args, **kwargs):
 		opinion = get_object_or_404(Opinion, pk=self.kwargs['opinion_pk'])
@@ -373,14 +408,16 @@ class AdministratorOpinionStatusView(LoginRequiredMixin, RedirectView):
 		return reverse_lazy('admin-list-opinions') + "#" + str(self.kwargs['opinion_pk'])
 
 
-class AdministratorListDoctorView(LoginRequiredMixin, ListView):
+class AdministratorListDoctorView(PermissionRequiredMixin, ListView):
+	permission_required = 'website.administrator_permission'
 	template_name = 'website/admin_doctors.html'
 	queryset = User.objects.filter(status=2)
 	ordering = ['last_name']
 	paginate_by = 25
 
 
-class AdministratorDoctorUpdateView(LoginRequiredMixin, UpdateView):
+class AdministratorDoctorUpdateView(PermissionRequiredMixin, UpdateView):
+	permission_required = 'website.administrator_permission'
 	template_name = 'website/doctor_update.html'
 	success_url = reverse_lazy('admin-panel')
 	fields = [
@@ -397,7 +434,8 @@ class AdministratorDoctorUpdateView(LoginRequiredMixin, UpdateView):
 		return User.objects.filter(pk=self.kwargs['pk'], status=2)
 
 
-class AdministratorQualificationUpdateView(LoginRequiredMixin, UpdateView):
+class AdministratorQualificationUpdateView(PermissionRequiredMixin, UpdateView):
+	permission_required = 'website.administrator_permission'
 	template_name = 'website/qualification_update.html'
 	success_url = reverse_lazy('admin-panel')
 	model = Qualification
@@ -410,7 +448,8 @@ class AdministratorQualificationUpdateView(LoginRequiredMixin, UpdateView):
 	]
 
 
-class AdministratorCreateDoctorView(LoginRequiredMixin, FormView):
+class AdministratorCreateDoctorView(PermissionRequiredMixin, FormView):
+	permission_required = 'website.administrator_permission'
 	template_name = 'website/admin_create_doctor.html'
 	form_class = CreateDoctorForm
 	success_url = reverse_lazy('reset_password')
@@ -427,6 +466,8 @@ class AdministratorCreateDoctorView(LoginRequiredMixin, FormView):
 			username=cd['username'],
 			status=2
 		)
+		permission = Permission.objects.get(codename='doctor_permission')
+		doctor.user_permissions.add(permission)
 		Qualification.objects.create(
 			salary=cd['salary'],
 			price=cd['price'],
@@ -439,7 +480,8 @@ class AdministratorCreateDoctorView(LoginRequiredMixin, FormView):
 		return super().form_valid(form)
 
 
-class AdministratorUpdatePatientView(LoginRequiredMixin, UpdateView):
+class AdministratorUpdatePatientView(PermissionRequiredMixin, UpdateView):
+	permission_required = 'website.administrator_permission'
 	template_name = 'website/update_patient.html'
 	success_url = reverse_lazy('admin-search-patient')
 	fields = [
@@ -453,7 +495,8 @@ class AdministratorUpdatePatientView(LoginRequiredMixin, UpdateView):
 		return User.objects.filter(pk=self.kwargs['pk'], status=1)
 
 
-class AdministratorListPatientView(LoginRequiredMixin, View):
+class AdministratorListPatientView(PermissionRequiredMixin, View):
+	permission_required = 'website.administrator_permission'
 	template_name = 'website/patient_list.html'
 	form_class = SearchPatientForm
 
@@ -474,7 +517,8 @@ class AdministratorListPatientView(LoginRequiredMixin, View):
 		return render(request, self.template_name, context={'users': users, 'form': form})
 
 
-class AdministratorDoctorWorkView(LoginRequiredMixin, RedirectView):
+class AdministratorDoctorWorkView(PermissionRequiredMixin, RedirectView):
+	permission_required = 'website.administrator_permission'
 	url = reverse_lazy('admin-list-doctors')
 
 	def get(self, request, *args, **kwargs):

@@ -17,18 +17,18 @@
                     {{ appointment.date }} {{ appointment.doctor.qualification.service }} {{ appointment.doctor }}</i>
             </div>
             <div class="row">
-                {% for appointmentnotes in appointment.appointment.all %}
-                    <p>Interview: {% if appointmentnotes.interview == None %}No data
-                    {% else %}{{ appointmentnotes.interview }}{% endif %}</p>
-                    <p>Diagnosis: {% if appointmentnotes.diagnosis == None %}No data
-                    {% else %}{{ appointmentnotes.diagnosis }}{% endif %}</p>
-                    <p>Recommendations: {% if appointmentnotes.recomendations == None %}No data
-                    {% else %}{{ appointmentnotes.recommendations }}{% endif %}</p>
-                    <p>Medications: {% if appointmentnotes.medications == None %}No data
-                    {% else %}{{ appointmentnotes.medications }}{% endif %}</p>
-                    <p>Remarks: {% if appointmentnotes.remarks == None %}No data
-                    {% else %}{{ appointmentnotes.remarks }}{% endif %}</p>
-                {% endfor %}
+                {% if appointment.appointment %}
+                <p>Interview: {% if appointment.appointment.interview == None %}No data
+                {% else %}{{ appointment.appointment.interview }}{% endif %}</p>
+                <p>Diagnosis: {% if appointment.appointment.diagnosis == None %}No data
+                {% else %}{{ appointment.appointment.diagnosis }}{% endif %}</p>
+                <p>Recommendations: {% if appointment.appointment.recomendations == None %}No data
+                {% else %}{{ appointment.appointment.recommendations }}{% endif %}</p>
+                <p>Medications: {% if appointment.appointment.medications == None %}No data
+                {% else %}{{ appointment.appointment.medications }}{% endif %}</p>
+                <p>Remarks: {% if appointment.appointment.remarks == None %}No data
+                {% else %}{{ appointment.appointment.remarks }}{% endif %}</p>
+                {% endif %}
             </div>
         </div>
     {% endfor %}

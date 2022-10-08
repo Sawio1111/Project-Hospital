@@ -14,12 +14,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='appointmentnotes',
             name='id',
-            field=models.BigAutoField(auto_created=True, default='', primary_key=True, serialize=False, verbose_name='ID'),
+            field=models.BigAutoField(default=None, auto_created=True, primary_key=True, serialize=False, verbose_name='ID'),
             preserve_default=False,
         ),
         migrations.AlterField(
             model_name='appointmentnotes',
             name='appointment',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='appointment', to='website.appointment'),
+            field=models.OneToOneField(default=None, on_delete=django.db.models.deletion.CASCADE, related_name='appointment', to='website.appointment'),
         ),
     ]

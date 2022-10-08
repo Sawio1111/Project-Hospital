@@ -23,6 +23,13 @@ class User(AbstractUser):
 	def __str__(self):
 		return f"{self.first_name} {self.last_name}"
 
+	class Meta:
+		permissions = (
+			('client_permission', 'Hospital patient'),
+			('doctor_permission', 'Hospital worker'),
+			('administrator_permission', 'Website management'),
+		)
+
 
 class Service(models.Model):
 	name = models.CharField(max_length=64)
@@ -77,10 +84,9 @@ class Appointment(models.Model):
 
 
 class AppointmentNotes(models.Model):
-	appointment = models.ForeignKey(
+	appointment = models.OneToOneField(
 		Appointment, on_delete=models.CASCADE,
 		primary_key=True,
-		unique=True,
 		related_name='appointment')
 	interview = models.TextField(null=True)
 	diagnosis = models.CharField(max_length=2048, null=True)

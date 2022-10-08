@@ -72,17 +72,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'medical_facility.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -147,3 +136,4 @@ try:
     from website.local_settings import EMAIL_BACKEND
 except ModuleNotFoundError:
     print("No email configuration in local_settings.py")
+
