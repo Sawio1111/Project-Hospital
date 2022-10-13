@@ -63,7 +63,7 @@ def create_admin_test(username='admin', password='admin'):
 		email=faker.email(),
 		pesel=faker.pesel(),
 		sex=1,
-		phone_number=faker.random_int(0, 9),
+		phone_number=faker.random_int(1, 9),
 		status=3
 	)
 	admin.set_password(password)
@@ -150,8 +150,6 @@ def create_datetimework(doctor):
 			)
 		new_time = new_time + datetime.timedelta(minutes=date.visit_time)
 	return date
-
-
 
 
 def create_appointment(patient, doctor, date, time):

@@ -8,7 +8,7 @@ from medical_facility import settings
 User = get_user_model()
 
 
-@pytest.mark.skip(reason="")
+@pytest.mark.skip
 @pytest.mark.django_db
 def test_main_page(client, create_service, create_patient_opinion):
 	response = client.get('/')
@@ -17,7 +17,7 @@ def test_main_page(client, create_service, create_patient_opinion):
 	assert len(response.context['opinions']) == 3
 
 
-@pytest.mark.skip(reason="")
+@pytest.mark.skip
 @pytest.mark.django_db
 def test_login(client, create_patient_opinion):
 	user = User.objects.first()
@@ -25,7 +25,7 @@ def test_login(client, create_patient_opinion):
 	assert response.status_code == 200
 
 
-@pytest.mark.skip(reason="")
+@pytest.mark.skip
 @pytest.mark.django_db
 def test_registration(client, create_patient_opinion):
 	users = User.objects.count()
@@ -45,7 +45,7 @@ def test_registration(client, create_patient_opinion):
 	assert response.status_code == 302
 
 
-@pytest.mark.skip(reason="")
+@pytest.mark.skip
 @pytest.mark.django_db
 def test_reset_password(client, create_patient_opinion):
 	user = User.objects.first()
@@ -55,14 +55,14 @@ def test_reset_password(client, create_patient_opinion):
 	assert response.status_code == 302
 
 
-@pytest.mark.skip(reason="")
+@pytest.mark.skip
 @pytest.mark.django_db
 def test_regulation_privacy(client):
 	response = client.get('/about-us/privacy-policy-and-regulation/')
 	assert response.status_code == 200
 
 
-@pytest.mark.skip(reason="")
+@pytest.mark.skip
 @pytest.mark.django_db
 def test_panel_patient(client, create_patient_opinion):
 	user = User.objects.first()
@@ -71,7 +71,7 @@ def test_panel_patient(client, create_patient_opinion):
 	assert response.status_code == 200
 
 
-@pytest.mark.skip(reason="")
+@pytest.mark.skip
 @pytest.mark.django_db
 def test_logout(client, create_patient_opinion):
 	user = User.objects.first()
@@ -80,13 +80,13 @@ def test_logout(client, create_patient_opinion):
 	assert response.status_code == 200
 
 
-# @pytest.mark.django_db
-# def test_update_patient(client, create_patient_opinion):
-# 	user = User.objects.first()
-# 	client.force_login(user=user)
-# 	old_email = user.email
-# 	response = client.post(f'/account/update/{user.pk}/', {'email': '222.newEmail@wp.pl'})
-# 	update_patient = User.objects.get(pk=user.pk)
-# 	assert old_email != update_patient.email
-# 	assert response.status_code == 200
+@pytest.mark.django_db
+def test_update_patient(client, create_patient_opinion):
+	user = User.objects.first()
+	client.force_login(user=user)
+	old_email = user.email
+	response = client.post(f'/account/update/{user.pk}/', {'email': '222.newEmail@wp.pl'})
+	update_patient = User.objects.get(pk=user.pk)
+	assert old_email != update_patient.email
+	assert response.status_code == 200
 
