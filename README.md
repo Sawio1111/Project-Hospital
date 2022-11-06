@@ -1,11 +1,13 @@
 # Project-Hospital
+description will appear soon
 
+## Contents
+* [General Info](#general-info)
+* [Technologies](#technologies)
+* [Setup](#setup)
+* [Current Status](#current-status)
 
-- Description will appear soon
-- Tests are in the writing process
-
-
-# General Info
-## Technologies
+### General Info
+### Technologies
 ### Setup 
-#### Current status
+### Current Status
