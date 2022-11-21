@@ -30,7 +30,7 @@ Used exclusively to write commands that fill data for the database.
 
 I also used a relational database SQL.
 * SQLite 3
-### Setup 
+### My tips during setup
 1. After cloning the repository, you need to configure "Settings.py" at the start. You need to add a database connection and configure the application's email. The best way to do this is to create a file named "local_settings.py" and place it in the website directory. 
 
 My "local_settings.py"
